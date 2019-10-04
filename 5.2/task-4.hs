@@ -4,21 +4,19 @@ returnLog :: a -> Log a
 returnLog = Log []
 
 bindLog :: Log a -> (a -> Log b) -> Log b
-bindLog l f = let 
-    Log msgA a = l
-    Log msgB b = f a
-    in Log (msgA++msgB) b
-
-
+bindLog l f
+  = let Log msgA a = l
+        Log msgB b = f a
+      in Log (msgA ++ msgB) b
 
 instance Functor Log where
-    fmap f (Log msg a) = Log msg (f a)
+        fmap f (Log msg a) = Log msg (f a)
 
 instance Applicative Log where
-    pure = returnLog
+        pure = returnLog
 
 instance Monad Log where
-    (>>=) = bindLog
+        (>>=) = bindLog
 
 execLoggersList :: a -> [a -> Log a] -> Log a
 execLoggersList = foldl (>>=) . pure
