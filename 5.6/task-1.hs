@@ -12,7 +12,6 @@ instance Monad (Reader r) where
   m >>= k  = Reader $ \r -> runReader (k (runReader m r)) r
 
 local' :: (r -> r') -> Reader r' a -> Reader r a
-local' f m = undefined
-
+local' f m =  Reader $ (runReader m) . f
 
 
