@@ -1,3 +1,4 @@
+import Data.List (isInfixOf)
 {-|
 	На этом шаге вы будете работать с монадой IO, а значит, ваша программа будет взаимодействовать с операционной системой. Чтобы тестирующая система смогла оценить вашу программу, пожалуйста, используйте только функции, работающие с файлами и директориями: getDirectoryContents, removeFile. Все эти функции уже будут находиться в области видимости, так что вам не следует их импортировать. По той же причине, главная функция вашей программы будет называться не main, а main' (со штрихом).
 
@@ -27,17 +28,19 @@ Canceled
 
 Пожалуйста, строго соблюдайте приведенный в примере формат вывода. Особое внимание уделите пробелам и переводам строк! Не забудьте про пробел после Substring:, а также про перевод строки в конце (ожидается, что вы будете использовать putStrLn для вывода сообщений об удалении).
 -}
-import System.Directory (getDirectoryContents,  removeFile)
-import Data.List (isInfixOf)
-main' :: IO () 
-main' = do
-    putStr "Substring: "
-    name <- getLine
-    if name == "" then putStrLn "Canceled" else remove name
+import System.Directory (getDirectoryContents, removeFile)
+
+main' :: IO ()
+main'
+  = do putStr "Substring: "
+       name <- getLine
+       if name == "" then putStrLn "Canceled" else remove name
 
 remove :: String -> IO ()
-remove name = do
-    files <- getDirectoryContents "."
-    filtered <- return $ (filter . isInfixOf) name files
-    sequence $ fmap (\x->removeFile x >>putStr "Removing file: " >>putStrLn x) filtered
-    return ()
+remove name
+  = do files <- getDirectoryContents "."
+       filtered <- return $ (filter . isInfixOf) name files
+       sequence $
+         fmap (\ x -> removeFile x >> putStr "Removing file: " >> putStrLn x)
+           filtered
+       return ()
